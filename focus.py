@@ -1,7 +1,7 @@
-import sys
 from PyQt6.QtWidgets import QApplication, QMenu, QSystemTrayIcon, QVBoxLayout, QDialog, QSlider, QPushButton, QColorDialog, QLabel
 from PyQt6.QtGui import QIcon, QColor
 from PyQt6.QtCore import Qt, pyqtSignal
+import webbrowser
 import win32gui
 import win32api
 import win32con
@@ -44,6 +44,10 @@ class ConfigDialog(QDialog):
         """
         super().__init__(parent)
 
+        # Set the dialog icon to the same icon as the main app
+        self.setWindowIcon(QIcon("icon.png"))
+
+        # Set the transparency and tint values
         self.transparency_config = transparency
         self.tint_config = tint
 
@@ -65,12 +69,45 @@ class ConfigDialog(QDialog):
         self.transparency_slider.setValue(int(self.transparency_config))
 
         # Create the tint color picker label
-        self.tint_color_picker_label = QLabel("Tint Color")
+        #self.tint_color_picker_label = QLabel("Tint Color")
 
         # Create the tint color picker without OK and cancel buttons
         #self.tint_color_picker = QColorDialog()
         #self.tint_color_picker.setOption(QColorDialog.ColorDialogOption.NoButtons)
         #self.tint_color_picker.setCurrentColor(QColor(self.tint_config))
+        
+        # Add a divider line to the form
+        self.div = QLabel("====================================")
+
+        # Create an about label and make it bold
+        self.about_label = QLabel("<b>About</b>")
+
+        # Create the copyright notice.
+        self.copy_notice = QLabel("Focus (C) 2024 David Cowern")
+
+        # Create a label for the project page and make it a clickable link to the project page
+        self.copy_notice_proj_page = QLabel("Project Page: <a href=\"https://github.com/dcowern/focus\" style=\"color: blue; text-decoration: underline;\">https://github.com/dcowern/focus</a>")
+        self.copy_notice_proj_page.setOpenExternalLinks(True)
+        self.copy_notice_proj_page.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction | Qt.TextInteractionFlag.LinksAccessibleByMouse)
+        self.copy_notice_proj_page.linkActivated.connect(lambda: webbrowser.open("https://github.com/dcowern/focus"))
+                                                                           
+        # Create a label for the project license and make it a clickable link to the license page
+        self.copy_notice_proj_license = QLabel("Project License: <a href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\" style=\"color: blue; text-decoration: underline;\">https://www.gnu.org/licenses/gpl-3.0.en.html</a>")
+        self.copy_notice_proj_license.setOpenExternalLinks(True)
+        self.copy_notice_proj_license.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction | Qt.TextInteractionFlag.LinksAccessibleByMouse)
+        self.copy_notice_proj_license.linkActivated.connect(lambda: webbrowser.open("https://www.gnu.org/licenses/gpl-3.0.en.html"))
+
+        # Create a label for the icon and make it a clickable link to icon page
+        self.copy_notice_icon_source = QLabel("Icon Source: <a href=\"https://icons8.com/icon/50274/aperture\" style=\"color: blue; text-decoration: underline;\">https://icons8.com/icon/50274/aperture</a>")  
+        self.copy_notice_icon_source.setOpenExternalLinks(True)
+        self.copy_notice_icon_source.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction | Qt.TextInteractionFlag.LinksAccessibleByMouse)
+        self.copy_notice_icon_source.linkActivated.connect(lambda: webbrowser.open("https://icons8.com/icon/50274/aperture"))
+
+        # Create a label for the icon license and make it a clickable link to license page
+        self.copy_notice_icon_license = QLabel("Icon License: <a href=\"https://icons8.com/license\" style=\"color: blue; text-decoration: underline;\">https://icons8.com/license</a>")
+        self.copy_notice_icon_license.setOpenExternalLinks(True)
+        self.copy_notice_icon_license.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction | Qt.TextInteractionFlag.LinksAccessibleByMouse)
+        self.copy_notice_icon_license.linkActivated.connect(lambda: webbrowser.open("https://icons8.com/license"))
         
         # Create the OK button
         self.ok_button = QPushButton("OK")
@@ -85,6 +122,17 @@ class ConfigDialog(QDialog):
         #self.layout.addWidget(self.tint_color_picker)
         self.layout.addWidget(self.ok_button)
         self.layout.addWidget(self.cancel_button)
+
+        # Add a divider line to the form
+        self.layout.addWidget(self.div)
+
+        # Add the about label to the layout
+        self.layout.addWidget(self.about_label)
+        self.layout.addWidget(self.copy_notice)
+        self.layout.addWidget(self.copy_notice_proj_page)
+        self.layout.addWidget(self.copy_notice_proj_license)
+        self.layout.addWidget(self.copy_notice_icon_source)
+        self.layout.addWidget(self.copy_notice_icon_license)
 
         # Add the layout to the dialog
         self.setLayout(self.layout)
@@ -258,6 +306,12 @@ class FocusApp(QApplication):
         """
         super().__init__(*args)
 
+        # Set the app name
+        self.setApplicationName("Focus")
+
+        # Set the app style to Windows Vista
+        self.setStyle("WindowsVista")
+
         # Set default transparency values
         self.transparency_max = 255
         self.transparency_dim = 0.5 * self.transparency_max
@@ -269,6 +323,18 @@ class FocusApp(QApplication):
 
         # Set the config file path to the users home directory
         self.config_file_path = os.path.join(os.path.expanduser("~"), ".focus_config.json")
+
+        print("Focus Copyright (C) 2024 David Cowern")
+        print("Project Page: https://github.com/dcowern/focus")
+        print("====================================")
+        print("This program comes with ABSOLUTELY NO WARRANTY")
+        print("This is free software, and you are welcome to redistribute")
+        print("or modify it under the terms of the GNU General Public License.")
+        print("See https://www.gnu.org/licenses/gpl-3.0.en.html for details.")
+        print("====================================")
+        print("The project icon comes from Icons8.com and carries its own license.")
+        print("Icon Source: https://icons8.com/icon/50274/aperture")
+        print("Icon License: https://icons8.com/license")
 
         # If the config file exists, read it. Otherwise, create it.
         if os.path.exists(self.config_file_path):
@@ -305,12 +371,14 @@ class FocusApp(QApplication):
             self.undim_option.setChecked(True)
 
         # Add a divider line
+        # Note: This doesn't seem to be working on any of the styling available on Windows
         self.menu.addSeparator()
 
         # Create the configure option
         self.config_option = self.menu.addAction("Configure")
 
         # Add a divider line
+        # Note: This doesn't seem to be working on any of the styling available on Windows
         self.menu.addSeparator()
 
         # Create the exit option
