@@ -8,8 +8,7 @@ This project supports neurodivergent individuals by providing a lightway way to 
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+- [Licenses](#licenses)
 
 ## Installation
 
@@ -17,7 +16,15 @@ To allow for execution in restricted environments, no installation is required; 
 
 ## Usage
 
+### Description
+
 Run `python focus.py`
+
+By default, the program wll dim all windows except for the active window by making them 50% transparent.  An icon that matches [icon.png](icon.png) in this repository will also appear in your system tray.  You can right click the icon to undim all windows, configure the transparency setting, or exit the program.  Exiting the program will cause all windows to undim.
+
+### Screenshot
+
+![Screenshot](screenshot.png)
 
 ## Licenses
 
